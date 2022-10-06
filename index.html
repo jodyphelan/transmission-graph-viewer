@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js" integrity="sha512-gEWKnYYa1/1c3jOuT9PR7NxiVI1bwn02DeJGsl+lMVQ1fWMNvtjkjxIApTdbJ/wcDjQmbf+McWahXwipdC9bGA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+    </head>
+    <body>
+        
+        <form action="/target" class="dropzone" id="json-drop" style="height:100%"></form>
+        <div id="cy" style="height:100%;"></div>
+
+        <script>
+
+            
+            Dropzone.options.jsonDrop = { // camelized version of the `id`
+                paramName: "file", // The name that will be used to transfer the file
+                maxFilesize: 10, // Mb
+                accept: function(file, done) {
+                    var reader = new FileReader();
+                    reader.addEventListener("loadend", function(event) { 
+                        const element = document.getElementById('json-drop');
+                        element.remove();
+                        data = JSON.parse(event.target.result);
+                        var cy = cytoscape({
+
+                            container: document.getElementById('cy'), // container to render in
+
+                            elements: data,
+
+
+                            style: [ // the stylesheet for the graph
+                                {
+                                    selector: 'node',
+                                    style: {
+                                    'background-color': 'data(colour)',
+                                    'label': 'data(id)',
+                                    'border-width': 2,
+                                    }
+                                },
+
+                                {
+                                    selector: 'edge',
+                                    style: {
+                                    'width': 3,
+                                    'line-color': '#ccc',
+                                    'curve-style': 'bezier'
+                                    }
+                                }
+                            ],
+
+                            layout: {
+                                name: 'cose',
+                                rows: 1
+                            }
+
+                        });
+
+                        // cy.nodes().forEach(function( ele ){
+                            
+                        //     ele.style('background-color', ele.data('colour'));
+                        // });
+
+                    });
+                    reader.readAsText(file);
+                    // console.log(typeof(data_string));
+
+                }
+            };
+
+
+            
+        </script>
+    </body>
+</html>
