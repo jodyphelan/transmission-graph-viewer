@@ -277,6 +277,12 @@
                             })
                         })
 
+                        cy.on('click',function(x){
+                            cy.nodes(':selected').forEach(function(ele){
+                              ele.style("border-color","red")
+                            })
+                        })
+
                         cy.on('tapunselect',function(ele){
                             cy.nodes().forEach(function(ele){
                               ele.style("border-color","black")
