@@ -87,7 +87,13 @@
                                 <input id="node_search" type="text" class="form-control" placeholder="" aria-label="Node search" aria-describedby="basic-addon2" oninput="node_search()">
                             </div>
 
-                          </div>
+                        </div>
+                        <div class="p-2">
+                            <label id="max_dist_label" class="form-check-label" for="legend" >
+                                Colour Legend
+                            </label>
+                            <div id="legend"></div>
+                        </div>
                           
                         
                     </div>
@@ -139,18 +145,31 @@
                             cy.nodes().forEach(function(ele, i, eles){
                                 ele.style('background-color', lineage_cols[ele.data('lineage')]);
                             })
+                            div = document.getElementById("legend");
+                            div.innerHTML = "";
+                            for (var key in lineage_cols) {
+                                div.innerHTML += "<span class='badge m-1' style='background-color:"+lineage_cols[key]+"'>"+key+"</span>"
+                            }
                         }
 
                         colour_by_drtype = function(){
                             cy.nodes().forEach(function(ele, i, eles){
                                 ele.style('background-color', dr_cols[ele.data('drtype')]);
                             })
+                            div = document.getElementById("legend");
+                            div.innerHTML = "";
+                            for (var key in dr_cols) {
+                                div.innerHTML += "<span class='badge m-1' style='background-color:"+dr_cols[key]+"'>"+key+"</span>"
+                            }
+
                         }
 
                         colour_nodes_black = function(){
                             cy.nodes().forEach(function(ele, i, eles){
                                 ele.style('background-color', '#000000');
                             })
+                            div = document.getElementById("legend");
+                            div.innerHTML = "";
                         }
 
                         alter_dist_label = function(){
