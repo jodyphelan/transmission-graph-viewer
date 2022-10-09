@@ -43,7 +43,7 @@
     <body>
 
 
-                <div class="d-flex" style="height:100%;">
+                <div class="d-flex justify-content-center" style="height:100%;">
                     <div class="p-2" style="overflow: auto; width:20%;">
                         <img class="img-fluid mt-4 mb-4" src="https://tbdr.lshtm.ac.uk/static/tb-profiler-logo-rectangle.png" alt="">
                         <form action="/target" class="dropzone" id="json-drop" style="width:100%; height:20%;"></form>
@@ -121,6 +121,27 @@
 
 
                     </div>
+                    <div id="info" class="p-5 align-self-center" style="max-width: 70%;">
+                        <div class="p-2 fs-3">
+                            Welcome to the TB-Profiler transmission viewer!
+                        </div>
+                        <div class="p-2">
+                            After running <kbd>tb-profiler collate</kbd>, you will get a file ending with
+                            <i>.transmission_graph.json</i>. Drag and drop this file to the upload box to 
+                            the left and see the graph. You can use the simple controls to colour the nodes
+                            based on drug resistance or lineage. You can also display labels. To select nodes 
+                            for download, use the <kbd>cmd/ctrl</kbd> key and click and drag and hit the
+                            download button.
+                        </div>
+                        <div class="p-2">
+                            No data is uploaded anywhere, all data is process and visualised in your browser
+                            and stays on your computer. To show funders our software is used we do monitor 
+                            the total number of page views, but no personal data is collected. This is facilitated through 
+                            <a href="https://docs.simpleanalytics.com/what-we-collect" target="_blank">Simple Analytics</a>.
+                        </div>
+                        
+                       
+                    </div>
                     <div class="p-2 flex-fill">
                         <div id="cy" style="height:100%;"></div>
                     </div>
@@ -148,8 +169,8 @@
                 accept: function(file, done) {
                     var reader = new FileReader();
                     reader.addEventListener("loadend", function(event) { 
-                        // const element = document.getElementById('json-drop');
-                        // element.remove();
+                        const element = document.getElementById('info');
+                        element.remove();
                         data = JSON.parse(event.target.result);
                         
                         add_snp_dists = function(){
