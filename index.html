@@ -5,7 +5,6 @@
         <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-        
         <style>
             body {
                 font-family: Roboto, "Open Sans", sans-serif;
@@ -13,6 +12,13 @@
                 font-weight: 300;
                 text-rendering: optimizeLegibility;
             }
+            .btn {
+                font-family: Roboto, "Open Sans", sans-serif;
+                font-size: 18px;
+                font-weight: 300;
+                text-rendering: optimizeLegibility;
+            }
+
             .dropzone {
                 background: white;
                 border-radius: 5px;
@@ -27,8 +33,10 @@
 
 
                 <div class="d-flex" style="height:100%;">
-                    <div class="p-2" style="width:20%;">
+                    <div class="p-2" style="overflow: auto; width:20%;">
+                        <img class="img-fluid mt-4 mb-4" src="https://tbdr.lshtm.ac.uk/static/tb-profiler-logo-rectangle.png" alt="">
                         <form action="/target" class="dropzone" id="json-drop" style="width:100%; height:20%;"></form>
+
                         <div class="p-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onclick="colour_nodes_black()">
@@ -48,6 +56,7 @@
                                     Lineage
                                 </label>
                             </div>
+                            <div id="legend"></div>
                         </div>
                         <div class="p-2">
                             <div class="form-check">
@@ -88,14 +97,18 @@
                             </div>
 
                         </div>
-                        <div class="p-2">
-                            <label id="max_dist_label" class="form-check-label" for="legend" >
-                                Colour Legend
-                            </label>
-                            <div id="legend"></div>
-                        </div>
-                          
                         
+                        <hr>
+                        <div class="p-2 ">
+                            <label class="form-check-label fs-6" for="sample_name_check">
+                                Select with cmd/ctrl + click + drag.
+                              </label>
+                            <button type="button" class="btn btn-outline-primary mt-2" onclick="download_sample_names()">Download selected IDs</button>
+                            <button type="button" class="btn btn-outline-primary mt-2" onclick="download_img()">Download PNG</button>
+                        </div>
+
+
+
                     </div>
                     <div class="p-2 flex-fill">
                         <div id="cy" style="height:100%;"></div>
@@ -224,10 +237,50 @@
                             layout: {
                                 name: 'cose'
                             },
-                            hideEdgesOnViewport: true
+                            hideEdgesOnViewport: true,
+                            boxSelectionEnabled:true
 
                         });
 
+                        cy.on('boxselect',function(x){
+                            cy.nodes(':selected').forEach(function(ele){
+                              ele.style("border-color","red")
+                            })
+                        })
+
+                        cy.on('tapunselect',function(ele){
+                            cy.nodes().forEach(function(ele){
+                              ele.style("border-color","black")
+                            })
+                        })
+                        
+                        download_sample_names = function() {
+                            var element = document.createElement('a');
+                            text = ""
+                            cy.nodes(':selected').map(function(x){return x.data('id')}).forEach(function(x){text += x + "\n"})
+                            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                            element.setAttribute('download', "sample_names.txt");
+
+                            element.style.display = 'none';
+                            document.body.appendChild(element);
+
+                            element.click();
+
+                            document.body.removeChild(element);
+                        }
+
+                        download_img = function() {
+                            var element = document.createElement('a');
+                            element.setAttribute('href', cy.png({scale:3,bg:"white"}));
+                            element.setAttribute('download', "graph.png");
+
+                            element.style.display = 'none';
+                            document.body.appendChild(element);
+
+                            element.click();
+
+                            document.body.removeChild(element);
+                        }
 
                         set_snp_dist_range = function(data){
                             max_dist = Math.max.apply(Math, data.filter(function(x){return "distance" in x.data}).map(function(o) { return o.data.distance; })) 
